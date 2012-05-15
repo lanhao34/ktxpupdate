@@ -46,7 +46,7 @@ for keyword in f2:
     add=[]
     k=0
     s_utf=keyword.decode(sys.stdin.encoding).encode("utf-8")
-    url_str='http://bt.ktxp.com/search.php?keyword='+urllib.quote(s_utf)
+    url_str='http://bt.ktxp.com/search.php?keyword=%s'%urllib.quote(s_utf)
     d = pq(url=url_str)
     div=d('tbody td')
     for i in div(":contains(':')"):
@@ -61,7 +61,7 @@ for keyword in f2:
         if t[i]>tLast:
             strTemp='\''+t[i]+'\',\''+name[i]+'\',\''+add[i]+'\')'
             try:
-                    cu.execute("insert into t1(subTime,name,magnetAdd) values("+strTemp)
+                    cu.execute("insert into t1(subTime,name,magnetAdd) values('%s','%s','%s')"%(t[i],name[i],add[i]))
                     print name[i].decode('utf').encode('gbk')
                     hasNew=hasNew+1
             except:
@@ -104,9 +104,7 @@ f.write('''
             <a><h2><span class="label label-info" style="font-size:20">BY 叉烧团子</span></h2></a>
         </ul>
         <ul class="nav pull-right">
-        '''
-            '<a><h2  style="color:#AAAAAA;margin: 0 40 0 0">有 <span class="label label-important" style="font-size:20">'+str(hasNew)+'</span> 个更新</h2></a>'
-        '''
+            <a><h2  style="color:#AAAAAA;margin: 0 40 0 0">有 <span class="label label-important" style="font-size:20">%s</span> 个更新</h2></a>
         </ul>
     </div>
     </div>
@@ -116,16 +114,17 @@ f.write('''
 <div class="container-fluid">
 <div class="row-fluid">
 <div class="span" style="margin: 0 0 0 10;">
-        ''')
+        '''%str(hasNew))
 j=0;
 for (dbid,dbtime,dbname,dbadd) in res:
     if dbtime>tLast:
             tLast=dbtime
     strTemp='''
     <div class="row show-grid">
-    <div class="span" style="background-color: #EEEEEE;border-radius: 8;margin: 5;padding: 5">
-    '''+'<a href=\"http://bt.ktxp.com/'+dbadd+'\"><h3><strong>'+dbtime+' '+dbname+'</strong></h3></a>'+'''
-    </div></div>'''
+        <div class="span" style="background-color: #EEEEEE;border-radius: 8;margin: 5;padding: 5">
+            <a href=\"http://bt.ktxp.com/%s\"><h3><strong>%s %s</strong></h3></a>
+        </div>
+    </div>'''%(dbadd,dbtime,dbname)
     f.write(strTemp)
 f.write('''
                 </div>
@@ -145,10 +144,10 @@ cx.close()
 
 print "更新结束".decode('utf').encode('gbk')
 if hasNew:
-        print "总共更新了".decode('utf').encode('gbk'),str(hasNew),"个!".decode('utf').encode('gbk')
+        print "总共更新了%s个!".decode('utf').encode('gbk')%str(hasNew)
 else:
         print "暂时没有更新，查看过去更新的内容请打开index.html。".decode('utf').encode('gbk')
 
 os.system('pause')
-while hasNew:
+if hasNew:
         webbrowser.open_new_tab(os.getcwd()+'\index.html')
