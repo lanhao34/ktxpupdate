@@ -7,7 +7,8 @@ import sys
 import sqlite3
 import webbrowser
 
-dirNow=os.getcwd()
+dirNow=os.path.dirname(sys.argv[0])
+
 tLast="2012/04/05 00:00"
 strfile=dirNow+'\list.txt'
 try:
@@ -142,7 +143,12 @@ f3.close()
 cu.close()
 cx.close()
 
-print "总共更新了".decode('utf').encode('gbk'),str(hasNew),"个!".decode('utf').encode('gbk')
+print "更新结束".decode('utf').encode('gbk')
+if hasNew:
+        print "总共更新了".decode('utf').encode('gbk'),str(hasNew),"个!".decode('utf').encode('gbk')
+else:
+        print "暂时没有更新，查看过去更新的内容请打开index.html。".decode('utf').encode('gbk')
 
 os.system('pause')
-webbrowser.open_new_tab(os.getcwd()+'\index.html')
+while hasNew:
+        webbrowser.open_new_tab(os.getcwd()+'\index.html')
